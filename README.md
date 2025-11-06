@@ -4,32 +4,18 @@ An AI-powered application that helps match seniors with appropriate living commu
 Features
 
 🎧 Audio Transcription: Automatically transcribes client intake interviews using OpenAI Whisper
+
 🤖 AI Preference Extraction: Uses GPT-4 to extract structured preferences from conversations
+
 🔍 Smart Filtering: Filters communities based on care level, budget, waitlist, and amenities
+
 📍 Geographic Ranking: Ranks by distance from preferred locations
+
 💰 Priority System: Prioritizes revenue-generating partners
+
 📊 Interactive Dashboard: Easy-to-use Streamlit interface
 
-Setup
-Local Development
 
-Clone the repository
-
-bashgit clone <your-repo-url>
-cd <repo-name>
-
-Create virtual environment
-
-bashpython -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-Install dependencies
-
-bashpip install -r requirements.txt
-
-Run the app
-
-bashstreamlit run streamlit_app.py
 
 Enter your OpenAI API key in the sidebar when the app opens
 
@@ -127,7 +113,9 @@ API Key Issues: Make sure your OpenAI API key has sufficient credits and access 
 File Upload Errors: Ensure files are in the correct format (.zip for audio, .xlsx for data).
 Geocoding Errors: The app uses free geocoding services which may have rate limits. If you see errors, wait a moment and try again.
 Distance Calculation Issues: Some communities may not have valid coordinates. These will be ranked lower.
+
 License
 [Your License Here]
+
 Contributors
 [Your Team Names]
