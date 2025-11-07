@@ -15,7 +15,7 @@ import re
 st.set_page_config(page_title="Senior Living Placement Assistant", layout="wide")
 
 # Title
-st.title("🏥 Senior Living Placement Assistant")
+st.title("Assisted Living Locators - Senior Living Placement Assistant")
 st.markdown("Upload audio and data files to get personalized community recommendations")
 
 # Initialize session state
