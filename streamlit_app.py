@@ -44,7 +44,7 @@ with tab1:
     
     with col1:
         st.subheader("Audio File")
-        audio_file = st.file_uploader("Upload ZIP with .m4a audio", type=['zip'])
+        audio_file = st.file_uploader("Upload audio file", type=['m4a', 'mp3', 'wav', 'mp4'])
         
     with col2:
         st.subheader("Community Data")
@@ -65,31 +65,23 @@ with tab2:
             try:
                 client = OpenAI(api_key=api_key)
                 
-                with st.spinner("Extracting and transcribing audio..."):
-                    # Create temp directory
-                    with tempfile.TemporaryDirectory() as tmpdir:
-                        # Extract ZIP
-                        zip_path = Path(tmpdir) / "audio.zip"
-                        with open(zip_path, "wb") as f:
-                            f.write(audio_file.getbuffer())
-                        
-                        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                            zip_ref.extractall(tmpdir)
-                        
-                        # Find audio file
-                        audio_files = list(Path(tmpdir).glob("*.m4a"))
-                        if not audio_files:
-                            st.error("❌ No .m4a files found in ZIP")
-                            st.stop()
-                        
-                        # Transcribe
-                        with open(audio_files[0], "rb") as audio:
-                            transcript = client.audio.transcriptions.create(
-                                model="whisper-1",
-                                file=audio
-                            )
-                        
-                        st.session_state.transcription = transcript.text
+                with st.spinner("Transcribing audio..."):
+                    # Create temp file to save the uploaded audio
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{audio_file.name.split('.')[-1]}") as tmp_file:
+                        tmp_file.write(audio_file.getbuffer())
+                        tmp_file_path = tmp_file.name
+                    
+                    # Transcribe the audio file directly
+                    with open(tmp_file_path, "rb") as audio:
+                        transcript = client.audio.transcriptions.create(
+                            model="whisper-1",
+                            file=audio
+                        )
+                    
+                    st.session_state.transcription = transcript.text
+                    
+                    # Clean up temp file
+                    Path(tmp_file_path).unlink()
                 
                 st.success("✅ Transcription complete!")
                 st.text_area("Transcribed Text", st.session_state.transcription, height=200)
