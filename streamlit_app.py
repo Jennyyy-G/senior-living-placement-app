@@ -43,14 +43,16 @@ with tab1:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Audio File")
-        audio_file = st.file_uploader("Upload audio file", type=['m4a', 'mp3', 'wav', 'mp4'])
+        st.subheader("Audio File(s)")
+        audio_files = st.file_uploader("Upload audio file(s)", type=['m4a', 'mp3', 'wav', 'mp4'], accept_multiple_files=True)
+        if audio_files:
+            st.info(f"📁 {len(audio_files)} file(s) uploaded")
         
     with col2:
         st.subheader("Community Data")
         excel_file = st.file_uploader("Upload community Excel file", type=['xlsx'])
     
-    if audio_file and excel_file:
+    if audio_files and excel_file:
         st.success("✅ All files uploaded!")
 
 with tab2:
@@ -58,14 +60,25 @@ with tab2:
     
     if not api_key:
         st.warning("⚠️ Please enter your OpenAI API key in the sidebar")
-    elif not audio_file:
-        st.warning("⚠️ Please upload audio file in Step 1")
+    elif not audio_files:
+        st.warning("⚠️ Please upload audio file(s) in Step 1")
     else:
+        # Allow user to select which file to process if multiple files uploaded
+        if len(audio_files) > 1:
+            selected_file_name = st.selectbox(
+                "Select audio file to transcribe:",
+                options=[f.name for f in audio_files]
+            )
+            audio_file = next(f for f in audio_files if f.name == selected_file_name)
+        else:
+            audio_file = audio_files[0]
+            st.info(f"📄 Processing: {audio_file.name}")
+        
         if st.button("🎧 Transcribe Audio", type="primary"):
             try:
                 client = OpenAI(api_key=api_key)
                 
-                with st.spinner("Transcribing audio..."):
+                with st.spinner(f"Transcribing {audio_file.name}..."):
                     # Create temp file to save the uploaded audio
                     with tempfile.NamedTemporaryFile(delete=False, suffix=f".{audio_file.name.split('.')[-1]}") as tmp_file:
                         tmp_file.write(audio_file.getbuffer())
